@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class ToDoList {
 
-    private static final String[] tasks = new String[10];
+    private static final String[] tasks = new String[100];
 
 
     public static void main(String[] args) {
@@ -37,7 +37,14 @@ public class ToDoList {
             } else if (userNumber == 4) {
                 taskComplete();
             } else if (userNumber == 0) {
+                System.out.println("Программа завершена!");
                 break;
+            } else if (userNumber < 0) {
+                System.out.println("Введите пункт меню ещё раз!\n\n");
+                menu();
+            } else if (userNumber > 4) {
+                System.out.println("Введите пункт меню ещё раз!\n\n");
+                menu();
             } else {
                 break;
             }
@@ -65,7 +72,7 @@ public class ToDoList {
 
 
     private static void viewTask() {
-        if (tasks[0] == null){
+        if (tasks[0] == null) {
             System.out.println("Список задач пуст!\n\n");
             menu();
             return;
@@ -86,27 +93,16 @@ public class ToDoList {
         System.out.println("Введите номер задачи для удаления:");
         Scanner scanner = new Scanner(System.in);
         int deleteTask = scanner.nextInt();
-        if (deleteTask <= 0) {
-            System.out.println("Вы ввели некорректный номер задачи!\n\n");
-            menu();
-            return ;
-        }
-        if (deleteTask > tasks.length) {
-            System.out.println("Максимальное число задач: " + tasks.length + "\n\n");
-            menu();
-            return;
-        }
-        if (tasks[deleteTask - 1] == null) {
-            System.out.println("Под этим номером нет задачи!\n\n");
-            menu();
+        if (userError(deleteTask)) {
             return;
         }
         for (int i = 0; i < tasks.length; i++) {
             if ((deleteTask - 1) == i) {
-                System.out.println("Задача \"" + tasks[deleteTask - 1].substring(6) + "\" удалена!");
+                System.out.println("Задача \"" + tasks[deleteTask - 1].substring(6) + "\" удалена!\n\n");
                 for (; i < tasks.length - 1; i++) {
                     tasks[i] = tasks[i + 1];
                 }
+                tasks[tasks.length - 1] = null;
                 break;
             }
         }
@@ -114,12 +110,19 @@ public class ToDoList {
     }
 
 
-    private static void taskComplete () {
+    private static void taskComplete() {
         System.out.println("Введите номер задачи для отметки:");
         Scanner scanner = new Scanner(System.in);
         int taskComplete = scanner.nextInt();
+        if (userError(taskComplete)) {
+            return;
+        }
         for (int i = 0; i < tasks.length; i++) {
             if ((taskComplete - 1) == i) {
+                if (tasks[i].startsWith(". [X]")) {
+                    System.out.println("Задача уже выполнена!\n\n");
+                    break;
+                }
                 String stringTasks = tasks[i].substring(6);
                 tasks[i] = ". [X] " + stringTasks;
                 System.out.println("Задача \"" + tasks[i].substring(6) + "\" отмечена как выполненная!\n\n");
@@ -127,5 +130,24 @@ public class ToDoList {
             }
         }
         menu();
+    }
+
+
+    private static boolean userError(int userNumError) {
+        if (userNumError <= 0) {
+            System.out.println("Вы ввели некорректный номер задачи!\n\n");
+            menu();
+            return true;
+        } else if (userNumError > tasks.length) {
+            System.out.println("Максимальное число задач: " + tasks.length + "\n\n");
+            menu();
+            return true;
+        } else if (tasks[userNumError - 1] == null) {
+            System.out.println("Под этим номером нет задачи!\n\n");
+            menu();
+            return true;
+        } else {
+            return false;
+        }
     }
 }
