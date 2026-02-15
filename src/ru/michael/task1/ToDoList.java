@@ -27,6 +27,10 @@ public class ToDoList {
     private static void program() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
+            if (userErrorString(scanner)) {
+                scanner.next();
+                continue;
+            }
             int userNumber = scanner.nextInt();
             if (userNumber == 1) {
                 addTask();
@@ -39,10 +43,7 @@ public class ToDoList {
             } else if (userNumber == 0) {
                 System.out.println("Программа завершена!");
                 break;
-            } else if (userNumber < 0) {
-                System.out.println("Введите пункт меню ещё раз!\n\n");
-                menu();
-            } else if (userNumber > 4) {
+            } else if (userNumber < 0 || userNumber > 4) {
                 System.out.println("Введите пункт меню ещё раз!\n\n");
                 menu();
             } else {
@@ -92,6 +93,9 @@ public class ToDoList {
     private static void deleteTask() {
         System.out.println("Введите номер задачи для удаления:");
         Scanner scanner = new Scanner(System.in);
+        if (userErrorString(scanner)) {
+            return;
+        }
         int deleteTask = scanner.nextInt();
         if (userError(deleteTask)) {
             return;
@@ -113,6 +117,9 @@ public class ToDoList {
     private static void taskComplete() {
         System.out.println("Введите номер задачи для отметки:");
         Scanner scanner = new Scanner(System.in);
+        if (userErrorString(scanner)) {
+            return;
+        }
         int taskComplete = scanner.nextInt();
         if (userError(taskComplete)) {
             return;
@@ -148,6 +155,17 @@ public class ToDoList {
             return true;
         } else {
             return false;
+        }
+    }
+
+
+    private static boolean userErrorString (Scanner scanner) {
+        if (scanner.hasNextInt()) {
+            return false;
+        } else {
+            System.out.println("Не корректный ввод! Попробуйте ещё раз!\n\n");
+            menu();
+            return true;
         }
     }
 }
